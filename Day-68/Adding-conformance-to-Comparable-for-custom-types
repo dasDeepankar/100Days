@@ -1,0 +1,67 @@
+//
+//  ContentView.swift
+//  BucketList
+//
+//  Created by Deepankar Das on 12/11/25.
+//
+
+import SwiftUI
+
+struct User: Comparable, Identifiable {
+    let id = UUID()
+    var username: String
+    var imageUrl: String
+    
+    static func < (lhs: User, rhs: User) -> Bool {
+        lhs.username < rhs.username
+    }
+}
+struct ContentView: View {
+    @State private var users = [
+        User(username: "Deepankar", imageUrl: "https://randomuser.me/api/portraits/men/2.jpg"),
+        User(username: "Shubham", imageUrl: "https://randomuser.me/api/portraits/men/3.jpg"),
+        User(username: "Aman", imageUrl: "https://randomuser.me/api/portraits/men/4.jpg"),
+        User(username: "Pavan", imageUrl: "https://randomuser.me/api/portraits/men/5.jpg")
+    ].sorted()
+    var body: some View {
+        NavigationStack{
+            List(users) { user in
+                HStack{
+                    if let url = URL(string: user.imageUrl) {
+                        AsyncImage(url: url) { phase in
+                            if let image = phase.image{
+                                image.resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(.circle)
+                            }
+                        }
+                    }
+                    Text(user.username)
+                }
+            }.onAppear {
+                print(URL.documentsDirectory)
+            }
+            .toolbar {
+                Button("Add User", systemImage: "plus") {
+                    let data = Data("This is a Test".utf8)
+                    let url = URL.documentsDirectory.appending(path: "message.txt")
+                    do {
+                        try data.write(to: url, options: [.atomic, .completeFileProtection])
+                        let input = try? String(contentsOf : url, encoding: .utf8)
+                        
+                        print(input ?? "No Data")
+                    }
+                    catch{
+                        print("Error in writing to file", error.localizedDescription)
+                    }
+                }
+            }
+            .navigationTitle("USER LIST")
+        }
+    }
+}
+
+#Preview {
+    ContentView()
+}

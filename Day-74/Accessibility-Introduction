@@ -1,0 +1,82 @@
+//
+//  ContentView.swift
+//  AccessibilitySandbox
+//
+//  Created by Deepankar Das on 24/11/25.
+//
+
+import SwiftUI
+
+struct ContentView: View {
+    private let images = [
+        "alexandre-daoust",
+        "frank-weichelt",
+        "hanna-plants",
+        "hanna"
+    ]
+    private let accessibilityLables = [
+        "squerrel",
+        "table-lamp",
+        "gold-flower",
+        "promogrante"
+    ]
+    @State private var selectedImage = Int.random(in: 0...3)
+    @State private var score = 1000
+    var body: some View {
+        VStack {
+            //            Image(images[selectedImage])
+            //                .resizable()
+            //                .scaledToFit()
+            //                .onTapGesture {
+            //                    selectedImage = Int.random(in: 0...3)
+            //                }
+            //                .accessibilityLabel(accessibilityLables[selectedImage])
+            //                .accessibilityAddTraits(.isButton)
+            //                .accessibilityRemoveTraits(.isImage)
+            
+            HStack{
+                Button("Increment", systemImage: "plus") {
+                    score += 100
+                }.buttonStyle(.glassProminent)
+                Text(String(score))
+                    .font(.title)
+                Button("Decrement", systemImage: "minus") {
+                    score -= 100
+                }.buttonStyle(.glassProminent)
+            }.accessibilityElement() // .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Score")
+                .accessibilityValue(String(score))
+                .accessibilityAdjustableAction { direction in
+                    switch direction {
+                    case .increment:
+                        score += 100
+                    case .decrement:
+                        score -= 100
+                    default:
+                        print("Not handled.")
+                    }
+                }
+            
+            
+            Image(.character)
+                .resizable()
+                .scaledToFit()
+                .clipShape(.circle)
+                .accessibilityHidden(true)
+                .shadow(radius: 5)
+            VStack {
+                Text("Your score is")
+                Text(String(score))
+                    .font(.title)
+            }.accessibilityElement()
+                .accessibilityLabel("Your score is \(score)")
+                .padding()
+            
+        }
+        .padding()
+    }
+}
+
+#Preview {
+    ContentView()
+}
